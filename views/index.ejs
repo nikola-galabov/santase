@@ -9,14 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>The Suit</h1>
-        <div class="card">
-            <%= theGame.theSuit.toString() %>
-        </div>
-    </div>
-
-    <div class="container">
-        <h1>Player 1 Cards:</h1>
+        <h1><%= theGame.player1.name %> Cards:</h1>
         <% theGame.player1.getCards().forEach(function(card){ %>
             <div class="card">
                 <%= card.toString() %>
@@ -25,21 +18,18 @@
     </div>
 
     <div class="container">
-        <h1>Player 2 Cards:</h1>
+        <h1><%= theGame.player2.name %> Cards:</h1>
         <% theGame.player2.getCards().forEach(function(card){ %>
             <div class="card">
                 <%= card.toString() %>
             </div>
         <% }); %>
     </div>
+        
+    <hr>
 
-    <div class="container">
-        <h1>Cards in deck:</h1>
-        <% theGame.deck.getCards().forEach(function(card){ %>
-            <div class="card">
-                <%= card.toString() %>
-            </div>
-        <% }); %>
-    </div>
+    <% while(theGame.playerOnTurn.getCards().length > 0) { %>
+        <%- include('hand', {theGame: theGame}); %>
+    <% } %>
 </body>
 </html>

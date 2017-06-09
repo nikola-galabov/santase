@@ -1,6 +1,16 @@
+// TODO: refactor this file
+
 var Card = require('./Card');
 var cards = [];
 var suits = ['♠', '♥', '♦',	'♣'];
+var points = {
+    '9': 0,
+    'J': 2,
+    'Q': 3,
+    'K': 4,
+    '10': 10,
+    'A': 11,
+};
 // Spade Suit	- Pika
 // Heart Suit
 // Diamond Suit	
@@ -18,7 +28,7 @@ function initDeck() {
     });
 }
 
-function _getDeckCards() {
+function getDeckCards() {
     return cards;
 }
 
@@ -30,17 +40,63 @@ function shuffleCards() {
 }
 
 class Deck {
-    constructor() {
-        initDeck();
-        shuffleCards();
+    constructor(testCards) {
+        if(!testCards) {
+            initDeck();
+            shuffleCards();
+
+            return;
+        }
+
+        testCards.forEach(function(card) {
+            var theCard = new Card(card.value, card.suit);
+            cards.push(theCard);
+        });
     }
 
     getCards() {
-        return _getDeckCards();
+        return getDeckCards();
     }
 
     next() {
         return cards.pop();
+    }
+
+    // return the stronger card
+    compareCards(card1, card2, gameSuit) {
+        // check the cards suits
+        if(card1.suit === gameSuit.suit && card2.suit !== gameSuit.suit) {
+            return card1;
+        }
+
+        if(card2.suit === gameSuit.suit && card1.suit !== gameSuit.suit) {
+            return card2;
+        }
+
+        // this is not true !!
+        if(card1.suit !== card2.suit) {
+            return card1;
+        }
+
+        if(points[card1.value] > points[card2.value]) {
+            return card1;
+        }
+
+        return card2;
+    }
+
+    getPoints(card) {
+        // console.log(card);
+        var totalPoints = 0;
+        if(Array.isArray(card)) {
+            card.forEach(function(card){
+                totalPoints += points[card.value];
+            });
+
+            return totalPoints;
+        }
+
+        return points[card.value];
     }
 }
 
