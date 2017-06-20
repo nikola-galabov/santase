@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/css/main.css">
+</head>
+<body>
+    <div id="game">
+        <div id="other-player-cards">
+            <div class="card back"></div><div class="card back"></div><div class="card back"></div><div class="card back"></div><div class="card back"></div><div class="card back"></div>
+        </div>
+
+        <div id="gameSuit" class="card"></div>
+
+        <div class="card back deck"></div>
+
+        <div id="played-cards"></div>
+
+        <div id="player-cards">
+            {{#cards}}
+                <div class="card">
+                    {{id}}
+                </div>
+            {{/cards}}
+        </div>
+    </div>
+
+    <script id="played-cards-template" type="x-tmpl-mustache">
+        <div class="card"> 
+            {{card.id}}
+        </div>
+    </script>
+    
+    <script id="game-suit-template" type="x-tmpl-mustache">
+        {{gameSuit.id}}
+    </script>
+    
+    <script id="cards-template" type="x-tmpl-mustache">
+        {{#cards}}
+            <div class="card {{#isOnTurn}}player-card{{/isOnTurn}}" data-id="{{id}}">
+                {{id}}
+            </div>
+        {{/cards}}
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/public/js/main.js"></script>
+</body>
+</html>

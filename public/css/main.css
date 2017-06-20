@@ -1,3 +1,4 @@
+/*for debuging*/
 .container {
     border: 1px solid; 
     margin-bottom: 10px;
@@ -13,4 +14,73 @@
     display: inline-block;
     border: 1px solid gray;
     border-radius: 5px;
+}
+
+/*real*/
+#game {
+    position: relative;
+    width: 700px;
+    height: 600px;
+    margin: 0 auto;
+    border: 1px solid black;
+    padding: 20px;
+}
+
+#player-cards {
+    position: absolute;
+    bottom: 20px;
+}
+
+#other-player-cards {
+    position: absolute;
+    top: 20px;
+}
+
+#played-cards {
+    position: absolute;
+    top: calc(50% - 120px);
+    left: 40%;
+}
+
+.card {
+    position: relative;
+    top: 0;
+    height: 120px;
+    width: 85px;
+    margin-right: 1px;
+    background-color: white;
+}
+
+.card.player-card:hover {
+    background-color: whitesmoke;
+}
+
+.card.back {
+    background-image: url(/public/images/card-back.jpg);
+    background-size: cover;
+}
+
+#gameSuit {
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+    position: absolute;
+    right: 40px;
+    top: 50%;
+}
+
+.deck {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    background: red;
+}
+
+.played-card {
+    position: absolute;
+    top: -250px;
+    left: 155px;
+    transition:all 0.1s linear;
 }

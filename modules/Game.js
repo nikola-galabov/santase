@@ -1,10 +1,16 @@
 var Deck = require('./Deck');
 
 class Game {
-    constructor(player1, player2, cards) {
-        this.player1 = player1;
-        this.player2 = player2;
-        this.playerOnTurn = player1;
+    constructor(cards, player1, player2) {
+        this.connectedPlayers = 0;
+        if(player1) {
+            this.addPlayer(player1);
+        }
+
+        if(player2) {
+            this.addPlayer(player2);
+        }
+        
         this.deck = new Deck(cards);
         this.gameSuit;
         this.currentHand = {};
@@ -25,8 +31,58 @@ class Game {
         this.gameSuit = cards[0];
     }
 
+    addPlayer(player) {
+        this.connectedPlayers++;
+        if(!this.player1) {
+            this.player1 = player;
+            this.playerOnTurn = this.player1;
+            this.player1.isOnTurn = true;
+
+            return this;
+        }
+
+        this.player2 = player;
+
+        return this;
+    }
+
+    getTheOtherPlayer(id) {
+        if(this.player1 && this.player1.id === id) {
+            return this.player2;
+        }
+
+        return this.player1;
+    }
+
+    removePlayer(id) {
+        if(this.player1 && this.player1.id === id) {
+            this.connectedPlayers--;
+            this.player1 = undefined;
+
+            return this;
+        }
+
+        if(this.player2 && this.player2.id === id) {
+            this.connectedPlayers--;
+            this.player2 = undefined;
+
+            return this;
+        }
+
+        return this;
+    }
+
+    getPlayerById(id) {
+        if(this.player1 && this.player1.id === id) {
+            return this.player1;
+        }
+
+        return this.player2;
+    }
+
     nextHand() {
         // the player on turn gives a card
+        this.currentHand = {};
         this.currentHand[this.playerOnTurn.name] = this.playerTurn(this.playerOnTurn);
 
         // the other player gives a card
