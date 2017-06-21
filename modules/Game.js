@@ -83,41 +83,42 @@ class Game {
     nextHand() {
         // the player on turn gives a card
         this.currentHand = {};
-        this.currentHand[this.playerOnTurn.name] = this.playerTurn(this.playerOnTurn);
+        this.currentHand[this.playerOnTurn.id] = this.playerTurn(this.playerOnTurn);
 
         // the other player gives a card
         this.playerOnTurn = (this.playerOnTurn === this.player1) ? this.player2 : this.player1;
-        this.currentHand[this.playerOnTurn.name] = this.playerTurn(this.playerOnTurn);
+        this.currentHand[this.playerOnTurn.id] = this.playerTurn(this.playerOnTurn);
 
         // save the hand
         this.pastHands.push(this.currentHand);
 
         // check the winner
-        this.playerOnTurn = this.checkResult(this.currentHand);
-
+        this.updateResult(this.currentHand);
+        this.currentHand = {};
         return this.currentHand;
     }
 
-    checkResult(hand) {
-        var winner, looser, winningCard, cards, nickname, winningCard, points;
+    updateResult(hand) {
+        var winner, looser, winningCard, cards, socketId, winningCard, points;
         
         // get only the cards from the object Object.values(hand); - not supported in this version
         cards = [];
-        for(nickname in hand) {
-            cards.push(hand[nickname]);
+        for(socketId in hand) {
+            cards.push(hand[socketId]);
         }
 
         // get the stronger card 
         winningCard = this.deck.compareCards(cards[0], cards[1], this.gameSuit);
-        for(nickname in hand) {
+        
+        for(socketId in hand) {
             // if this is not the winning card we will continue the loop
-            if(hand[nickname] !== winningCard) {
+            if(hand[socketId] !== winningCard) {
                 continue;
             }
 
             winner = this.player2;
             looser = this.player1;
-            if(this.player1.name === nickname) {
+            if(this.player1.id === socketId) {
                 winner = this.player1;
                 looser = this.player2;
             }
@@ -132,7 +133,12 @@ class Game {
         points = this.deck.getPoints(cards);
         winner.addPoints(points);
 
-        return winner;
+        // update variables
+        this.playerOnTurn = winner;
+        winner.isOnTurn = true;
+        looser.isOnTurn = false;
+        
+        return this;
     }
 
     playerTurn(player) {

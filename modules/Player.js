@@ -20,15 +20,26 @@ class Player {
     }
 
     getCard(id) {
-        var filteredCards = this.cards.filter(function(card){
-            return card.id === id;
+        var theCard, theCardIndex;
+        
+        var filteredCards = this.cards.filter(function(card, index){
+            if(card.id === id) {
+                theCardIndex = index;
+
+                return true;
+            }
+
+            return false;
         });
 
         if(filteredCards.length !== 1) {
             return undefined
         }
 
-        return filteredCards[0];
+        theCard = filteredCards[0];
+        this.cards.splice(this.cards.indexOf(theCard), 1);
+
+        return theCard;
     }
 
     addPoints(points) {

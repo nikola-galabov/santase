@@ -9,24 +9,18 @@
 </head>
 <body>
     <div id="game">
-        <div id="other-player-cards">
-            <div class="card back"></div><div class="card back"></div><div class="card back"></div><div class="card back"></div><div class="card back"></div><div class="card back"></div>
-        </div>
+        <div id="other-player-cards"></div>
 
-        <div id="gameSuit" class="card"></div>
-
-        <div class="card back deck"></div>
+        <div id="gameSuitAndDeck"></div>
 
         <div id="played-cards"></div>
 
         <div id="player-cards">
-            {{#cards}}
-                <div class="card">
-                    {{id}}
-                </div>
-            {{/cards}}
+            Waiting for second player..
         </div>
     </div>
+
+    <div id="score"></div>
 
     <script id="played-cards-template" type="x-tmpl-mustache">
         <div class="card"> 
@@ -34,8 +28,15 @@
         </div>
     </script>
     
+    <script id="score-template" type="x-tmpl-mustache">
+        Me {{ myPoints }} : {{ otherPlayerPoints }} Other Player
+    </script>
+
     <script id="game-suit-template" type="x-tmpl-mustache">
-        {{gameSuit.id}}
+        <div id="gameSuit" class="card">{{gameSuit.id}}</div>
+        <div class="deck">
+            {{{deck}}}
+        </div>
     </script>
     
     <script id="cards-template" type="x-tmpl-mustache">

@@ -42,32 +42,41 @@ io.on('connection', function (socket) {
     }
 
     socket.on('playCard', function (cardId) {
-        cardsForCurrentHand++;
         var thePlayer = theGame.getPlayerById(socket.id);
+        var theOtherPlayer = theGame.getTheOtherPlayer(socket.id);
         var card = thePlayer.getCard(cardId);
         if(!card) {
             // should throw exception or something like this
         }
-        
-        theGame.currentHand[thePlayer.id] = card;
 
-        // this should be refactored...
-        if(cardsForCurrentHand === 1) {
-            askPlayerForResponse(theGame.getTheOtherPlayer(socket.id), card);            
-        } else {
-            cardsForCurrentHand = 0;
-            theGame.playerOnTurn = theGame.checkResult(theGame.currentHand);
-            // OMG..
-            theGame.playerOnTurn.isOnTurn = true;
-            sendFeedback();
+        theGame.currentHand[thePlayer.id] = card;
+        cardsForCurrentHand++;
+        theOtherPlayer.isOnTurn = true;
+        thePlayer.isOnTurn = false;
+        if(cardsForCurrentHand === 2) {
+           theOtherPlayer.isOnTurn = false; 
         }
 
+        // send the data to the other player
+        askPlayerForResponse(theOtherPlayer, theGame.currentHand, thePlayer); 
+
+        // next hand
+        if(cardsForCurrentHand === 2) {
+            cardsForCurrentHand = 0;
+            theGame.updateResult(theGame.currentHand);
+            setTimeout(sendCardsToPlayers, 2000); // or may be there is other better way
+        }
     });
 
     socket.on('disconnect', function(){
+        var newPlayerInstance;
         var theOtherPlayer = theGame.getTheOtherPlayer(socket.id);
-        var newPlayerInstance = new Player(theOtherPlayer.id, theOtherPlayer.name);
         theGame = new Game(cards);
+        if(! theOtherPlayer) {
+            return;
+        }
+
+        newPlayerInstance = new Player(theOtherPlayer.id, theOtherPlayer.name);
         theGame.addPlayer(newPlayerInstance);
     });
 });
@@ -79,26 +88,26 @@ function sendCardsToPlayers() {
     io.to(theGame.player1.id).emit('getCards', {
         cards: theGame.player1.getCards(),
         gameSuit: theGame.gameSuit,
-        isOnTurn: theGame.player1.isOnTurn
+        isOnTurn: theGame.player1.isOnTurn,
+        myPoints: theGame.player1.points,
+        otherPlayerPoints: theGame.player2.points,
+        cardsInDeck: theGame.deck.getCards().length
     });
 
     io.to(theGame.player2.id).emit('getCards', { 
         cards: theGame.player2.getCards(),
         gameSuit: theGame.gameSuit,
-        isOnTurn: theGame.player2.isOnTurn
+        isOnTurn: theGame.player2.isOnTurn,
+        myPoints: theGame.player2.points,
+        otherPlayerPoints: theGame.player1.points,
+        cardsInDeck: theGame.deck.getCards().length
     });
 }
 
-function askPlayerForResponse(player, card) {
+function askPlayerForResponse(player, currentHand, otherPlayer) {
     io.to(player.id).emit('myTurn', {
-        card: card,
+        currentHand: currentHand,
+        isOnTurn: player.isOnTurn,
+        otherPlayer: otherPlayer.id
     });
-}
-
-function sendFeedback() {
-    // send the results
-
-    // re-send the cards
-
-    // double check everything
 }
