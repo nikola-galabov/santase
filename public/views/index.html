@@ -23,7 +23,7 @@
     <div id="score"></div>
 
     <script id="played-cards-template" type="x-tmpl-mustache">
-        <div class="card"> 
+        <div class="card {{card.color}}"> 
             {{card.id}}
         </div>
     </script>
@@ -33,7 +33,7 @@
     </script>
 
     <script id="game-suit-template" type="x-tmpl-mustache">
-        <div id="gameSuit" class="card">{{gameSuit.id}}</div>
+        <div id="gameSuit" class="card {{gameSuit.color}}">{{gameSuit.id}}</div>
         <div class="deck">
             {{{deck}}}
         </div>
@@ -41,7 +41,7 @@
     
     <script id="cards-template" type="x-tmpl-mustache">
         {{#cards}}
-            <div class="card {{#isOnTurn}}player-card{{/isOnTurn}}" data-id="{{id}}">
+            <div class="card {{color}} {{#isOnTurn}}player-card{{/isOnTurn}}" data-id="{{id}}">
                 {{id}}
             </div>
         {{/cards}}

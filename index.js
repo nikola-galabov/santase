@@ -85,22 +85,29 @@ server.listen(port);
 
 // logyc that should be extracted somewhere else
 function sendCardsToPlayers() {
+    var winner;
+    if(theGame.winner) {
+        winner = theGame.winner.id;
+    }
+
     io.to(theGame.player1.id).emit('getCards', {
-        cards: theGame.player1.getCards(),
+        cards: theGame.deck.sortCards(theGame.player1.getCards(), theGame.gameSuit.suit),
         gameSuit: theGame.gameSuit,
         isOnTurn: theGame.player1.isOnTurn,
         myPoints: theGame.player1.points,
         otherPlayerPoints: theGame.player2.points,
-        cardsInDeck: theGame.deck.getCards().length
+        cardsInDeck: theGame.deck.getCards().length,
+        winner: winner
     });
 
     io.to(theGame.player2.id).emit('getCards', { 
-        cards: theGame.player2.getCards(),
+        cards: theGame.deck.sortCards(theGame.player2.getCards(), theGame.gameSuit.suit),
         gameSuit: theGame.gameSuit,
         isOnTurn: theGame.player2.isOnTurn,
         myPoints: theGame.player2.points,
         otherPlayerPoints: theGame.player1.points,
-        cardsInDeck: theGame.deck.getCards().length
+        cardsInDeck: theGame.deck.getCards().length,
+        winner: winner
     });
 }
 

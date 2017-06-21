@@ -11,6 +11,12 @@ var points = {
     '10': 10,
     'A': 11,
 };
+var suitsSort = {
+    '♥': 1,
+    '♠': 2, 
+    '♦': 3,
+    '♣': 4
+}
 // Spade Suit	- Pika
 // Heart Suit
 // Diamond Suit	
@@ -60,6 +66,24 @@ class Deck {
 
     next() {
         return cards.pop();
+    }
+
+    sortCards(cards, gameSuit) {
+        return cards.sort(function(first, second){
+            if(first.suit === gameSuit && second.suit !== gameSuit) {
+                return -1;
+            }
+
+            if(second.suit === gameSuit && first.suit !== gameSuit) {
+                return 1;
+            }
+
+            if(suitsSort[first.suit] === suitsSort[second.suit]) {
+                return points[first.value] < points[second.value];
+            }
+            
+            return suitsSort[first.suit] > suitsSort[second.suit]
+        });
     }
 
     // return the stronger card

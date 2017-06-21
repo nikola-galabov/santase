@@ -51,6 +51,14 @@
     background-color: white;
 }
 
+.card.red {
+    color: red;
+}
+
+.card.black {
+    color: black;
+}
+
 .card.player-card:hover {
     background-color: whitesmoke;
 }

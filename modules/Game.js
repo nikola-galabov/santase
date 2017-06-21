@@ -15,6 +15,7 @@ class Game {
         this.gameSuit;
         this.currentHand = {};
         this.pastHands = [];
+        this.winner;
     }
 
     // give six cards to both of the players
@@ -138,6 +139,10 @@ class Game {
         winner.isOnTurn = true;
         looser.isOnTurn = false;
         
+        if(winner.points >= 66) {
+            this.winner = winner;
+        }
+
         return this;
     }
 

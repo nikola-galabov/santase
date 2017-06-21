@@ -1,8 +1,20 @@
 var socket = io.connect('http://localhost:1948');
 var myTurn = false; // TODO - remove the global variable
 
-socket.on('getCards', function (cards) {
-    renderCards(cards);
+socket.on('getCards', function (data) {
+    if(! data.winner) {
+        renderCards(data);
+
+        return;
+    }
+    
+    if(data.winner === socket.id) {
+        alert('You win :)');
+
+        return;
+    }
+
+    alert('You loose :(');
 });
 
 $('#game').on('click', '.card.player-card', function() {
