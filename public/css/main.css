@@ -79,6 +79,10 @@
     top: 50%;
 }
 
+#gameSuit.changable:hover, #gameSuit.selectedForChange {
+    background-color: whitesmoke;
+}
+
 .deck {
     position: absolute;
     right: 10px;

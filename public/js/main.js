@@ -3,6 +3,7 @@ var myTurn = false; // TODO - remove the global variables
 var currentlyFirst = false;
 var pastHandsNumber = 0;
 var announcements;
+var canChangeCard = false;
 
 socket.on('getCards', function (data) {
     announcements = data.announcements;
@@ -20,6 +21,14 @@ socket.on('getCards', function (data) {
     }
 
     alert('You loose :(');
+});
+
+$('#game').on('click', '#gameSuit.changable', function() {
+    var $this = $(this);
+    
+    if(canChangeCard) {
+       socket.emit('changeGameSuit', $this.data('id'));
+    }
 });
 
 $('#game').on('click', '.card.player-card', function() {
@@ -84,8 +93,9 @@ function printPlayedCard(card) {
     $('#played-cards').html(rendered);
 }
 
-// TODO rename the function
+// TODO rename the function and refactore it
 function renderCards(data) {
+    canChangeCard = data.canChangeCard;
     myTurn = data.isOnTurn;
     currentlyFirst = data.currentlyFirst;
     pastHandsNumber = data.pastHandsNumber;
@@ -102,14 +112,18 @@ function renderCards(data) {
     for(var i = 0; i < data.cardsInDeck - 1; i++) {
         deck += '<div class="card back deck-card">';
     }
+
     for(var i = 0; i < data.cardsInDeck - 1; i++) {
         deck += '</div>';
     }
-    
+
     var renderedGameSuit = Mustache.render(gameSuitTemplate, {gameSuit: data.gameSuit, deck: deck});
     $('#gameSuitAndDeck').html(renderedGameSuit);
     if(data.cardsInDeck === 0) {
         $('#gameSuitAndDeck').html('');
+    }
+    if(canChangeCard) {
+        $('#gameSuit').addClass('changable');
     }
 
     // other player cards

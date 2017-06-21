@@ -75,6 +75,21 @@ io.on('connection', function (socket) {
         }
     });
 
+    socket.on('changeGameSuit', function(){
+        var thePlayer = theGame.getPlayerById(socket.id);
+        
+        if(
+            thePlayer.canChangeCard(theGame.gameSuit.suit) && 
+            theGame.pastHands.length > 0 && 
+            cardsForCurrentHand === 0
+        ){
+            var playerCard = thePlayer.getCard(`9${theGame.gameSuit.suit}`);
+            var oldGameSuit = theGame.changeGameSuit(playerCard);
+            thePlayer.takeCard(oldGameSuit);
+            sendCardsToPlayers();
+        }
+    })
+
     socket.on('disconnect', function(){
         var newPlayerInstance;
         var theOtherPlayer = theGame.getTheOtherPlayer(socket.id);
@@ -107,7 +122,8 @@ function sendCardsToPlayers() {
         winner: winner,
         announcements: theGame.player1.checkCardsForAnnouncements(theGame.gameSuit.suit),
         currentlyFirst: theGame.player1.isOnTurn,
-        pastHandsNumber: theGame.pastHands.length
+        pastHandsNumber: theGame.pastHands.length,
+        canChangeCard: theGame.player1.canChangeCard(theGame.gameSuit.suit)
     });
 
     io.to(theGame.player2.id).emit('getCards', { 
@@ -119,7 +135,8 @@ function sendCardsToPlayers() {
         cardsInDeck: theGame.deck.getCards().length,
         winner: winner,
         announcements: theGame.player2.checkCardsForAnnouncements(theGame.gameSuit.suit),
-        currentlyFirst: theGame.player2.isOnTurn
+        currentlyFirst: theGame.player2.isOnTurn,
+        canChangeCard: theGame.player2.canChangeCard(theGame.gameSuit.suit)
     });
 }
 

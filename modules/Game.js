@@ -100,6 +100,7 @@ class Game {
     }
 
     updateResult(hand) {
+        this.currentHand = {};
         var winner, looser, winningCard, cards, socketId, winningCard, points;
         
         // get only the cards from the object Object.values(hand); - not supported in this version
@@ -144,7 +145,7 @@ class Game {
         }
 
         this.pastHands.push(hand);
-        
+
         return this;
     }
 
@@ -179,6 +180,13 @@ class Game {
         ) {
             player.addPoints(40);
         }
+    }
+
+    changeGameSuit(card) {
+        var oldGameSuit = this.deck.changeGameSuitCard(card);
+        this.gameSuit = this.deck.getCards()[0];
+
+        return oldGameSuit;
     }
 }
 

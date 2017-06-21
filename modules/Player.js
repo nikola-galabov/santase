@@ -50,6 +50,20 @@ class Player {
         this.points += points;
     }
 
+    canChangeCard(gameSuit) {
+        var nineOfSuit = this.cards.find(function(card){
+            if(card.suit === gameSuit && card.value === '9') {
+                return true;
+            }
+        });
+
+        if(! nineOfSuit) {
+            return false;
+        }
+
+        return true;
+    }
+
     checkCardsForAnnouncements(gameSuit) {
         var kings = [];
         var queens = [];
@@ -80,7 +94,7 @@ class Player {
             if(gameSuit === king.suit) {
                 this.announcements.hasForthy = true;
                 this.announcements.forthy.suit = gameSuit;
-                
+
                 return;
             }
 

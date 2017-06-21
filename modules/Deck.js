@@ -122,6 +122,13 @@ class Deck {
 
         return points[card.value];
     }
+
+    changeGameSuitCard(card) {
+        var oldGameSuit = cards[0];
+        cards[0] = card;
+
+        return oldGameSuit;
+    }
 }
 
 module.exports = Deck;
