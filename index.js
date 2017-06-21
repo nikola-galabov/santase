@@ -41,6 +41,7 @@ io.on('connection', function (socket) {
         sendCardsToPlayers();
     }
 
+    // TODO refactoring
     socket.on('playCard', function (cardId) {
         var thePlayer = theGame.getPlayerById(socket.id);
         var theOtherPlayer = theGame.getTheOtherPlayer(socket.id);
@@ -55,6 +56,12 @@ io.on('connection', function (socket) {
         thePlayer.isOnTurn = false;
         if(cardsForCurrentHand === 2) {
            theOtherPlayer.isOnTurn = false; 
+        } 
+        
+        // check for announcements
+        if(theGame.pastHands.length > 0 && cardsForCurrentHand === 1){
+            theGame.checkForTwenty(thePlayer, card);
+            theGame.checkForForthy(thePlayer, card, theGame.gameSuit.suit);
         }
 
         // send the data to the other player
@@ -97,7 +104,10 @@ function sendCardsToPlayers() {
         myPoints: theGame.player1.points,
         otherPlayerPoints: theGame.player2.points,
         cardsInDeck: theGame.deck.getCards().length,
-        winner: winner
+        winner: winner,
+        announcements: theGame.player1.checkCardsForAnnouncements(theGame.gameSuit.suit),
+        currentlyFirst: theGame.player1.isOnTurn,
+        pastHandsNumber: theGame.pastHands.length
     });
 
     io.to(theGame.player2.id).emit('getCards', { 
@@ -107,7 +117,9 @@ function sendCardsToPlayers() {
         myPoints: theGame.player2.points,
         otherPlayerPoints: theGame.player1.points,
         cardsInDeck: theGame.deck.getCards().length,
-        winner: winner
+        winner: winner,
+        announcements: theGame.player2.checkCardsForAnnouncements(theGame.gameSuit.suit),
+        currentlyFirst: theGame.player2.isOnTurn
     });
 }
 

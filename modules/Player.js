@@ -5,6 +5,16 @@ class Player {
         this.points = 0;
         this.cards = [];
         this.isOnTurn = false;
+        this.announcements = {
+            hasTwenty: false,
+            hasForthy: false,
+            twenty: {
+                suits: []
+            },
+            forthy: {
+                suit: undefined
+            }
+        };
     }
 
     takeCard(card) {
@@ -20,16 +30,10 @@ class Player {
     }
 
     getCard(id) {
-        var theCard, theCardIndex;
+        var theCard;
         
         var filteredCards = this.cards.filter(function(card, index){
-            if(card.id === id) {
-                theCardIndex = index;
-
-                return true;
-            }
-
-            return false;
+            return card.id === id;
         });
 
         if(filteredCards.length !== 1) {
@@ -44,6 +48,48 @@ class Player {
 
     addPoints(points) {
         this.points += points;
+    }
+
+    checkCardsForAnnouncements(gameSuit) {
+        var kings = [];
+        var queens = [];
+
+        // get the kings and queens from the cards
+        this.cards.forEach(function(card){
+            if(card.value === 'K') {
+                kings.push(card);
+            }
+
+            if(card.value === 'Q') {
+                queens.push(card);
+            }
+        });
+
+        // loop over the kings and check if the player has a queen for the same suit
+        kings.forEach(function(king){
+            var match = queens.find(function(queen){
+                return queen.suit === king.suit;
+            });
+
+            // we don't have a match
+            if(! match) {
+                return;
+            }
+
+            // player has 40
+            if(gameSuit === king.suit) {
+                this.announcements.hasForthy = true;
+                this.announcements.forthy.suit = gameSuit;
+                
+                return;
+            }
+
+            // player has 20
+            this.announcements.hasTwenty = true;    
+            this.announcements.twenty.suits.push(king.suit);
+        }, this);
+
+        return this.announcements;
     }
 }
 

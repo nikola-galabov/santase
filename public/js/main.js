@@ -1,7 +1,12 @@
 var socket = io.connect('http://localhost:1948');
-var myTurn = false; // TODO - remove the global variable
+var myTurn = false; // TODO - remove the global variables
+var currentlyFirst = false;
+var pastHandsNumber = 0;
+var announcements;
 
 socket.on('getCards', function (data) {
+    announcements = data.announcements;
+
     if(! data.winner) {
         renderCards(data);
 
@@ -26,6 +31,11 @@ $('#game').on('click', '.card.player-card', function() {
     // do not allow the player to play a second card
     myTurn = false;
     $('#player-cards .card').removeClass('player-card');
+    
+    if(currentlyFirst && pastHandsNumber > 0) {
+        checkForAnnouncements($this);
+    }
+
     // send the card to the server
     $this.addClass('played-card');
     socket.emit('playCard', $this.data('id'));
@@ -43,6 +53,29 @@ socket.on('myTurn', function(data) {
     }
 });
 
+function checkForAnnouncements($card) {
+    // TODO render announcements
+    // check for 40
+    if(
+        announcements && 
+        announcements.hasForthy && 
+        announcements.forthy.suit === $card.data('suit') &&
+        ($card.data('value') === 'K' || $card.data('value') === 'Q')
+    ) {
+        console.log('+40');
+    }
+
+    // check for 20
+    if(
+        announcements && 
+        announcements.hasTwenty && 
+        announcements.twenty.suits.indexOf($card.data('suit')) !== -1 &&
+        ($card.data('value') === 'K' || $card.data('value') === 'Q')
+    ) {
+        console.log('+20');  
+    }
+}
+
 function printPlayedCard(card) {
     $('#other-player-cards .card').last().remove();
     var playedCardTemplate = $('#played-cards-template').html();
@@ -54,6 +87,8 @@ function printPlayedCard(card) {
 // TODO rename the function
 function renderCards(data) {
     myTurn = data.isOnTurn;
+    currentlyFirst = data.currentlyFirst;
+    pastHandsNumber = data.pastHandsNumber;
     // player cards
     var cardsTemplate = $('#cards-template').html();
     Mustache.parse(cardsTemplate);   // optional, speeds up future uses

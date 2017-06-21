@@ -41,7 +41,12 @@
     
     <script id="cards-template" type="x-tmpl-mustache">
         {{#cards}}
-            <div class="card {{color}} {{#isOnTurn}}player-card{{/isOnTurn}}" data-id="{{id}}">
+            <div 
+                class="card {{color}} {{#isOnTurn}}player-card{{/isOnTurn}}" 
+                data-id="{{id}}" 
+                data-suit="{{suit}}"
+                data-value="{{value}}"
+            >
                 {{id}}
             </div>
         {{/cards}}

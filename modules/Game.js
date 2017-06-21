@@ -143,6 +143,8 @@ class Game {
             this.winner = winner;
         }
 
+        this.pastHands.push(hand);
+        
         return this;
     }
 
@@ -153,6 +155,30 @@ class Game {
         }
 
         return theCard;
+    }
+
+    checkForTwenty(player, card) {
+        if(
+            player.announcements && 
+            player.announcements.hasTwenty && 
+            player.announcements.twenty.suits.indexOf(card.suit) !== -1 &&
+            (card.value === 'K' || card.value === 'Q')
+        ) {
+            player.addPoints(20);
+        }
+
+        return this;
+    }
+
+    checkForForthy(player, card, suit) {
+        if(
+            player.announcements && 
+            player.announcements.hasForthy && 
+            player.announcements.forthy.suit === card.suit &&
+            (card.value === 'K' || card.value === 'Q')
+        ) {
+            player.addPoints(40);
+        }
     }
 }
 
