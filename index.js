@@ -88,7 +88,12 @@ io.on('connection', function (socket) {
             thePlayer.takeCard(oldGameSuit);
             sendCardsToPlayers();
         }
-    })
+    });
+
+    socket.on('closeGame', function(){
+        theGame.isClosed = true;
+        socket.broadcast.emit('gameIsClosed');
+    });
 
     socket.on('disconnect', function(){
         var newPlayerInstance;

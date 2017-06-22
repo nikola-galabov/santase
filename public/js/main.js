@@ -1,12 +1,17 @@
-var socket = io.connect('http://localhost:1948');
-var myTurn = false; // TODO - remove the global variables
-var currentlyFirst = false;
-var pastHandsNumber = 0;
-var announcements;
-var canChangeCard = false;
+// TODO - remove the global variables
+var socket = io.connect('http://localhost:1948'),
+    myTurn = false,
+    currentlyFirst = false,
+    pastHandsNumber = 0,
+    canChangeCard = false,
+    isGameClosed = false,
+    otherPlayerCard,
+    announcements,
+    gameSuit;
 
 socket.on('getCards', function (data) {
     announcements = data.announcements;
+    gameSuit = data.gameSuit.suit;
 
     if(! data.winner) {
         renderCards(data);
@@ -32,11 +37,23 @@ $('#game').on('click', '#gameSuit.changable', function() {
 });
 
 $('#game').on('click', '.card.player-card', function() {
-    var $this = $(this);
+    var $this = $(this)
+        isValidMove = true;
+
     if(!myTurn) {
         return;
     }
 
+    // check for closed game
+    if(isGameClosed) {
+        isValidMove = checkPlayerCard($this);
+        if(! isValidMove) {
+            return alert('You should play a card that matches the suit of your opponent!');
+        }
+
+        otherPlayerCard = undefined;
+    }
+    
     // do not allow the player to play a second card
     myTurn = false;
     $('#player-cards .card').removeClass('player-card');
@@ -50,9 +67,19 @@ $('#game').on('click', '.card.player-card', function() {
     socket.emit('playCard', $this.data('id'));
 });
 
+$('#game').on('click', '#close-the-game', function(){
+    isGameClosed = true;
+    $(this).remove();
+    $('#gameSuit')
+        .addClass('closed')
+        .removeClass('changable');
+    
+    socket.emit('closeGame');
+});
+
 socket.on('myTurn', function(data) {
     // print the other player's card
-    var otherPlayerCard = data.currentHand[data.otherPlayer];
+    otherPlayerCard = data.currentHand[data.otherPlayer];
     printPlayedCard(otherPlayerCard);
 
     // allow the player to play
@@ -60,6 +87,14 @@ socket.on('myTurn', function(data) {
     if(myTurn) {
         $('#player-cards .card').addClass('player-card');
     }
+});
+
+socket.on('gameIsClosed', function(){
+    isGameClosed = true;
+    $('#close-the-game').remove();
+    $('#gameSuit')
+        .addClass('closed')
+        .removeClass('changable');
 });
 
 function checkForAnnouncements($card) {
@@ -117,7 +152,7 @@ function renderCards(data) {
         deck += '</div>';
     }
 
-    var renderedGameSuit = Mustache.render(gameSuitTemplate, {gameSuit: data.gameSuit, deck: deck});
+    var renderedGameSuit = Mustache.render(gameSuitTemplate, {gameSuit: data.gameSuit, deck: deck, isGameClosed: isGameClosed});
     $('#gameSuitAndDeck').html(renderedGameSuit);
     if(data.cardsInDeck === 0) {
         $('#gameSuitAndDeck').html('');
@@ -141,4 +176,42 @@ function renderCards(data) {
     Mustache.parse(scoreTemplate);   // optional, speeds up future uses
     var renderedScore = Mustache.render(scoreTemplate, {myPoints: data.myPoints, otherPlayerPoints: data.otherPlayerPoints});
     $('#score').html(renderedScore);
+}
+
+// TODO: verify that the player is required to give a stronger card from the requested suit if he has one
+function checkPlayerCard($card) {
+    var suits = {};
+
+    if(! otherPlayerCard) {
+        return true;
+    }
+    
+    $('#player-cards .card').each(function(i, e) { 
+        var cardSuit = $(e).data('suit');
+
+        if(!suits.hasOwnProperty(cardSuit)) {
+            suits[cardSuit] = 0;
+        }
+
+        suits[cardSuit]++;
+    });
+
+    // the player has a card of requested suit, but is trying to play a card from other suit
+    if(
+        $card.data('suit') !== otherPlayerCard.suit &&
+        suits.hasOwnProperty(otherPlayerCard.suit)
+    ) {
+        return false;
+    }
+
+    // the player has not a card of requested suit, but he has a card from the gam suit and he is required to use it
+    if(
+        $card.data('suit') !== otherPlayerCard.suit &&
+        $card.data('suit') !== gameSuit &&
+        suits.hasOwnProperty(gameSuit)
+    ) {
+        return false;
+    }
+
+    return true;
 }

@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Santase Card Game</title>
     <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="shortcut icon" type="image/x-icon" href="/public/images/favicon.ico">
 </head>
 <body>
     <div id="game">
@@ -33,10 +34,11 @@
     </script>
 
     <script id="game-suit-template" type="x-tmpl-mustache">
-        <div id="gameSuit" class="card {{gameSuit.color}}">{{gameSuit.id}}</div>
+        <div id="gameSuit" class="card {{gameSuit.color}} {{#isGameClosed}}closed{{/isGameClosed}}">{{gameSuit.id}}</div>
         <div class="deck">
             {{{deck}}}
         </div>
+        <button id="close-the-game" {{#isGameClosed}}style="display: none;"{{/isGameClosed}}>Close the game</button>
     </script>
     
     <script id="cards-template" type="x-tmpl-mustache">

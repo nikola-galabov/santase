@@ -12,10 +12,11 @@ class Game {
         }
         
         this.deck = new Deck(cards);
-        this.gameSuit;
         this.currentHand = {};
         this.pastHands = [];
+        this.isClosed = false; // if it is true the players are required to respond with the same suit
         this.winner;
+        this.gameSuit;
     }
 
     // give six cards to both of the players
@@ -81,6 +82,7 @@ class Game {
         return this.player2;
     }
 
+    // for debugging
     nextHand() {
         // the player on turn gives a card
         this.currentHand = {};

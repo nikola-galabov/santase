@@ -22,8 +22,16 @@
     width: 700px;
     height: 600px;
     margin: 0 auto;
-    border: 1px solid black;
     padding: 20px;
+}
+
+#score {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 #player-cards {
@@ -79,7 +87,22 @@
     top: 50%;
 }
 
-#gameSuit.changable:hover, #gameSuit.selectedForChange {
+#gameSuit.closed {
+    z-index: 1;
+}
+
+#close-the-game {
+    position: absolute;
+    top: 43%;
+    right: 10px;
+    background: white;
+    border: 1px solid lightgray;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+#gameSuit.changable:hover, #close-the-game:hover, #gameSuit.selectedForChange {
     background-color: whitesmoke;
 }
 
