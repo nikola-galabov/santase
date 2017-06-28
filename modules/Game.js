@@ -128,9 +128,13 @@ class Game {
             }
         }
 
-        if(this.deck.getCards().length > 0) {
+        if(this.deck.getCards().length > 0 && ! this.isClosed) {
             winner.takeCard(this.deck.next());
             looser.takeCard(this.deck.next());            
+        }
+
+        if(this.deck.getCards().length === 0) {
+            this.isClosed = true;
         }
 
         // add the score to the winner

@@ -38,7 +38,13 @@
         <div class="deck">
             {{{deck}}}
         </div>
-        <button id="close-the-game" {{#isGameClosed}}style="display: none;"{{/isGameClosed}}>Close the game</button>
+        <button 
+            id="close-the-game" 
+            {{#isGameClosed}}style="display: none;"{{/isGameClosed}}
+            {{#cannotCloseGame}}disabled="disabled"{{/cannotCloseGame}}
+        >
+            Close the game
+        </button>
     </script>
     
     <script id="cards-template" type="x-tmpl-mustache">

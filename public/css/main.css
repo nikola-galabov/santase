@@ -102,8 +102,16 @@
     border-radius: 5px;
 }
 
+#close-the-game:disabled {
+    background: gainsboro;
+}
+
 #gameSuit.changable:hover, #close-the-game:hover, #gameSuit.selectedForChange {
     background-color: whitesmoke;
+}
+
+#close-the-game:disabled:hover {
+    background: gainsboro;
 }
 
 .deck {

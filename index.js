@@ -91,8 +91,13 @@ io.on('connection', function (socket) {
     });
 
     socket.on('closeGame', function(){
-        theGame.isClosed = true;
-        socket.broadcast.emit('gameIsClosed');
+        var thePlayer = theGame.getPlayerById(socket.id);
+        if(thePlayer.canCloseGame(theGame.pastHands.length)) {
+            theGame.isClosed = true;
+            io.emit('gameIsClosed');
+        }
+
+        return false;
     });
 
     socket.on('disconnect', function(){
@@ -128,7 +133,9 @@ function sendCardsToPlayers() {
         announcements: theGame.player1.checkCardsForAnnouncements(theGame.gameSuit.suit),
         currentlyFirst: theGame.player1.isOnTurn,
         pastHandsNumber: theGame.pastHands.length,
-        canChangeCard: theGame.player1.canChangeCard(theGame.gameSuit.suit)
+        canChangeCard: theGame.player1.canChangeCard(theGame.gameSuit.suit),
+        canCloseGame: theGame.player1.canCloseGame(theGame.pastHands.length),
+        isClosed: theGame.isClosed
     });
 
     io.to(theGame.player2.id).emit('getCards', { 
@@ -141,7 +148,9 @@ function sendCardsToPlayers() {
         winner: winner,
         announcements: theGame.player2.checkCardsForAnnouncements(theGame.gameSuit.suit),
         currentlyFirst: theGame.player2.isOnTurn,
-        canChangeCard: theGame.player2.canChangeCard(theGame.gameSuit.suit)
+        canChangeCard: theGame.player2.canChangeCard(theGame.gameSuit.suit),
+        canCloseGame: theGame.player2.canCloseGame(theGame.pastHands.length),
+        isClosed: theGame.isClosed
     });
 }
 

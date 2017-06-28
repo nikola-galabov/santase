@@ -64,6 +64,14 @@ class Player {
         return true;
     }
 
+    canCloseGame(numberOfHands) {
+        if(numberOfHands === 0 || !this.isOnTurn) {
+            return false;
+        }
+
+        return true;
+    }
+
     checkCardsForAnnouncements(gameSuit) {
         var kings = [];
         var queens = [];
